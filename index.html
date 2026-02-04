@@ -317,6 +317,30 @@
             color: white;
             border-color: #f39c12;
         }
+        .cohort-progress-container {
+            width: 100%;
+            height: 24px;
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+            display: none;
+        }
+        .cohort-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #3498db;
+            border-radius: 3px;
+            transition: width 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+            min-width: 40px;
+        }
         canvas {
             border: 1px solid #404040;
             border-radius: 4px;
@@ -551,6 +575,57 @@
                 Fitness over time (green = good fit, red = poor fit)
             </div>
         </div>
+
+        <!-- COHORT SIMULATION -->
+        <div class="level-section">
+            <div class="level-title">COHORT SIMULATION → Statistical Outcomes</div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Cohort Size:</label>
+                    <input type="range" id="cohort-size" min="10" max="500" value="100" step="10">
+                    <span id="cohort-size-val">100</span>
+                </div>
+                <div class="control-group">
+                    <label>Statistical Diffusion:</label>
+                    <input type="range" id="cohort-diffusion" min="0" max="100" value="20" step="5">
+                    <span id="cohort-diffusion-val">20%</span>
+                </div>
+                <button onclick="runCohort()" id="cohort-run-btn">Run Cohort</button>
+            </div>
+
+            <div class="cohort-progress-container" id="cohort-progress-container">
+                <div class="cohort-progress-bar" id="cohort-progress-bar">0%</div>
+            </div>
+
+            <div class="stats" id="cohort-stats" style="display: none;">
+                <div class="stat-card outcome-success">
+                    <div class="stat-label">Success Rate</div>
+                    <div class="stat-value" id="cohort-success-rate">-</div>
+                </div>
+                <div class="stat-card outcome-failure">
+                    <div class="stat-label">Failure Rate</div>
+                    <div class="stat-value" id="cohort-failure-rate">-</div>
+                </div>
+                <div class="stat-card outcome-abandoned">
+                    <div class="stat-label">Abandoned Rate</div>
+                    <div class="stat-value" id="cohort-abandoned-rate">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg Final Fitness</div>
+                    <div class="stat-value" id="cohort-avg-fitness">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg Steps Survived</div>
+                    <div class="stat-value" id="cohort-avg-steps">-</div>
+                </div>
+            </div>
+
+            <canvas id="cohort-chart" width="800" height="300" style="width: 100%; height: auto; display: none;"></canvas>
+            <div id="cohort-chart-label" style="font-size: 12px; color: #a0a0a0; margin-top: 5px; display: none;">
+                Outcome distribution across cohort agents
+            </div>
+        </div>
     </div>
 
     <script>
@@ -595,7 +670,9 @@
                 { id: 'success-threshold', display: 'success-threshold-val', format: v => v + '%' },
                 { id: 'flip-energy-cost', display: 'flip-energy-cost-val', format: v => v },
                 { id: 'env-size', display: 'env-size-val', format: v => v },
-                { id: 'env-flip-rate', display: 'env-flip-rate-val', format: v => v + '%' }
+                { id: 'env-flip-rate', display: 'env-flip-rate-val', format: v => v + '%' },
+                { id: 'cohort-size', display: 'cohort-size-val', format: v => v },
+                { id: 'cohort-diffusion', display: 'cohort-diffusion-val', format: v => v + '%' }
             ];
 
             sliders.forEach(slider => {
@@ -952,6 +1029,275 @@
 
         // Initial draw
         drawFitnessChart();
+
+        // --- Cohort Simulation ---
+
+        function gaussianRandom(mean, stddev) {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            return mean + z * stddev;
+        }
+
+        function generateAgentParams(diffusion) {
+            const sliderDefs = [
+                { id: 'sensing-range',      min: 5,  max: 30,  round: true },
+                { id: 'flip-power',         min: 1,  max: 5,   round: true },
+                { id: 'flip-rate',          min: 0,  max: 100, round: false },
+                { id: 'energy',             min: 50, max: 300, round: true },
+                { id: 'abandon-threshold',  min: 20, max: 80,  round: false },
+                { id: 'success-threshold',  min: 60, max: 100, round: false },
+                { id: 'flip-energy-cost',   min: 0,  max: 5,   round: true },
+                { id: 'env-size',           min: 50, max: 200, round: true },
+                { id: 'env-flip-rate',      min: 0,  max: 20,  round: false }
+            ];
+
+            const params = {};
+            sliderDefs.forEach(def => {
+                const baseVal = parseFloat(document.getElementById(def.id).value);
+                const range = def.max - def.min;
+                const stddev = diffusion * range / 4;
+                let val = gaussianRandom(baseVal, stddev);
+                val = Math.max(def.min, Math.min(def.max, val));
+                if (def.round) val = Math.round(val);
+                params[def.id] = val;
+            });
+            return params;
+        }
+
+        function simulateOneAgent(params, concept) {
+            const MAX_STEPS = 1000;
+            const envSize = params['env-size'];
+            const env = Array.from({ length: envSize }, () => Math.random() > 0.5 ? 1 : 0);
+            let energy = params['energy'];
+            let currentPosition = 0;
+            const fitnessHistory = [];
+            let outcome = 'running';
+            let timestep = 0;
+
+            const sensingRange = params['sensing-range'];
+            const flipPower = params['flip-power'];
+            const flipRate = params['flip-rate'] / 100;
+            const flipEnergyCost = params['flip-energy-cost'];
+            const abandonThreshold = params['abandon-threshold'] / 100;
+            const successThreshold = params['success-threshold'] / 100;
+            const envFlipRate = params['env-flip-rate'] / 100;
+
+            function calcFitness(pos) {
+                if (pos + concept.length > env.length) return 0;
+                let matches = 0;
+                for (let i = 0; i < concept.length; i++) {
+                    if (env[pos + i] === concept[i]) matches++;
+                }
+                return matches / concept.length;
+            }
+
+            while (outcome === 'running' && timestep < MAX_STEPS) {
+                timestep++;
+
+                // Environment flips
+                for (let i = 0; i < env.length; i++) {
+                    if (Math.random() < envFlipRate) env[i] = 1 - env[i];
+                }
+
+                // Find best position (regulation)
+                const startPos = Math.max(0, currentPosition - sensingRange);
+                const endPos = Math.min(env.length - concept.length, currentPosition + sensingRange);
+                let bestPos = currentPosition;
+                let bestFit = calcFitness(bestPos);
+                for (let pos = startPos; pos <= endPos; pos++) {
+                    const fit = calcFitness(pos);
+                    if (fit > bestFit) {
+                        bestFit = fit;
+                        bestPos = pos;
+                    }
+                }
+                currentPosition = bestPos;
+
+                // Implementation: flip bits
+                let flipsAttempted = 0;
+                for (let i = 0; i < concept.length && flipsAttempted < flipPower; i++) {
+                    const envIdx = currentPosition + i;
+                    if (env[envIdx] !== concept[i]) {
+                        energy -= flipEnergyCost;
+                        if (Math.random() < flipRate) env[envIdx] = concept[i];
+                        flipsAttempted++;
+                    }
+                }
+
+                // Recalculate fitness
+                const newFitness = calcFitness(currentPosition);
+                fitnessHistory.push(newFitness);
+
+                // Energy drain
+                energy -= 1;
+
+                // Check outcomes
+                if (energy <= 0) {
+                    outcome = 'abandoned';
+                } else if (newFitness < abandonThreshold && timestep > 10) {
+                    outcome = 'failure';
+                } else if (
+                    timestep > 50 &&
+                    fitnessHistory.length >= 20 &&
+                    fitnessHistory.slice(-20).every(f => f >= successThreshold)
+                ) {
+                    outcome = 'success';
+                }
+            }
+
+            // If still running after MAX_STEPS, count as abandoned
+            if (outcome === 'running') outcome = 'abandoned';
+
+            const finalFitness = fitnessHistory.length > 0 ? fitnessHistory[fitnessHistory.length - 1] : 0;
+            return { outcome, steps: timestep, finalFitness };
+        }
+
+        function runCohort() {
+            const cohortSize = parseInt(document.getElementById('cohort-size').value);
+            const diffusion = parseFloat(document.getElementById('cohort-diffusion').value) / 100;
+            const conceptSnapshot = state.concept.slice();
+
+            if (conceptSnapshot.length === 0) {
+                alert('Generate an idea and apply a scheme first (Levels 1 & 2).');
+                return;
+            }
+
+            const btn = document.getElementById('cohort-run-btn');
+            btn.disabled = true;
+
+            const progressContainer = document.getElementById('cohort-progress-container');
+            const progressBar = document.getElementById('cohort-progress-bar');
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+
+            document.getElementById('cohort-stats').style.display = 'none';
+            document.getElementById('cohort-chart').style.display = 'none';
+            document.getElementById('cohort-chart-label').style.display = 'none';
+
+            const results = [];
+            let completed = 0;
+            const CHUNK = 10;
+
+            function processChunk() {
+                const end = Math.min(completed + CHUNK, cohortSize);
+                for (let i = completed; i < end; i++) {
+                    const params = generateAgentParams(diffusion);
+                    results.push(simulateOneAgent(params, conceptSnapshot));
+                }
+                completed = end;
+
+                const pct = Math.round((completed / cohortSize) * 100);
+                progressBar.style.width = pct + '%';
+                progressBar.textContent = pct + '%';
+
+                if (completed < cohortSize) {
+                    setTimeout(processChunk, 0);
+                } else {
+                    btn.disabled = false;
+                    displayCohortResults(results);
+                }
+            }
+
+            setTimeout(processChunk, 0);
+        }
+
+        function displayCohortResults(results) {
+            const total = results.length;
+            const counts = { success: 0, failure: 0, abandoned: 0 };
+            let totalFitness = 0;
+            let totalSteps = 0;
+
+            results.forEach(r => {
+                counts[r.outcome]++;
+                totalFitness += r.finalFitness;
+                totalSteps += r.steps;
+            });
+
+            document.getElementById('cohort-success-rate').textContent =
+                (counts.success / total * 100).toFixed(1) + '%';
+            document.getElementById('cohort-failure-rate').textContent =
+                (counts.failure / total * 100).toFixed(1) + '%';
+            document.getElementById('cohort-abandoned-rate').textContent =
+                (counts.abandoned / total * 100).toFixed(1) + '%';
+            document.getElementById('cohort-avg-fitness').textContent =
+                (totalFitness / total * 100).toFixed(1) + '%';
+            document.getElementById('cohort-avg-steps').textContent =
+                (totalSteps / total).toFixed(1);
+
+            document.getElementById('cohort-stats').style.display = 'grid';
+            drawCohortChart(counts, total);
+        }
+
+        function drawCohortChart(counts, total) {
+            const canvas = document.getElementById('cohort-chart');
+            canvas.style.display = 'block';
+            document.getElementById('cohort-chart-label').style.display = 'block';
+
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width;
+            const H = canvas.height;
+
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, W, H);
+
+            const categories = [
+                { key: 'success',   label: 'Success',   color: '#27ae60' },
+                { key: 'failure',   label: 'Failure',   color: '#c0392b' },
+                { key: 'abandoned', label: 'Abandoned', color: '#7f8c8d' }
+            ];
+
+            const padding = { left: 60, right: 40, top: 30, bottom: 50 };
+            const chartW = W - padding.left - padding.right;
+            const chartH = H - padding.top - padding.bottom;
+            const barWidth = chartW / categories.length * 0.6;
+            const gap = chartW / categories.length;
+
+            // Y-axis gridlines (0% to 100%)
+            ctx.strokeStyle = '#404040';
+            ctx.lineWidth = 1;
+            ctx.fillStyle = '#a0a0a0';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const pct = i * 20;
+                const y = padding.top + chartH - (pct / 100) * chartH;
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(W - padding.right, y);
+                ctx.stroke();
+                ctx.fillText(pct + '%', padding.left - 8, y + 4);
+            }
+
+            // Bars
+            categories.forEach((cat, idx) => {
+                const pct = total > 0 ? counts[cat.key] / total : 0;
+                const barH = pct * chartH;
+                const x = padding.left + idx * gap + (gap - barWidth) / 2;
+                const y = padding.top + chartH - barH;
+
+                ctx.fillStyle = cat.color;
+                ctx.fillRect(x, y, barWidth, barH);
+
+                // Percentage label above bar
+                ctx.fillStyle = '#e0e0e0';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText((pct * 100).toFixed(1) + '%', x + barWidth / 2, y - 8);
+
+                // Category label below bar
+                ctx.fillStyle = '#a0a0a0';
+                ctx.font = '13px Arial';
+                ctx.fillText(cat.label, x + barWidth / 2, padding.top + chartH + 20);
+
+                // Count below label
+                ctx.fillStyle = '#808080';
+                ctx.font = '11px Arial';
+                ctx.fillText('(' + counts[cat.key] + '/' + total + ')', x + barWidth / 2, padding.top + chartH + 38);
+            });
+        }
     </script>
 </body>
 </html>
