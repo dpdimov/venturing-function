@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Venturing Function Dynamics</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            font-size: clamp(20px, 4vw, 28px);
+        }
+        .subtitle {
+            color: #a0a0a0;
+            margin-bottom: 10px;
+            font-style: italic;
+            font-size: clamp(12px, 2.5vw, 14px);
+        }
+        .about-toggle {
+            display: inline-block;
+            font-size: 12px;
+            color: #707070;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 20px;
+            transition: color 0.2s;
+        }
+        .about-toggle:hover {
+            color: #a0a0a0;
+        }
+        .about-toggle .toggle-arrow {
+            display: inline-block;
+            font-size: 10px;
+            transition: transform 0.2s;
+            margin-right: 4px;
+        }
+        .about-toggle.open .toggle-arrow {
+            transform: rotate(90deg);
+        }
+        .about-content {
+            display: none;
+            margin-bottom: 25px;
+            padding: 16px 20px;
+            background: #232323;
+            border-left: 3px solid #404040;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #b0b0b0;
+        }
+        .about-content.open {
+            display: block;
+        }
+        .about-content h3 {
+            color: #d0d0d0;
+            font-size: 14px;
+            margin: 14px 0 6px 0;
+        }
+        .about-content h3:first-child {
+            margin-top: 0;
+        }
+        .about-content ul {
+            margin: 4px 0;
+            padding-left: 18px;
+        }
+        .about-content li {
+            margin: 3px 0;
+        }
+        .level-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid #404040;
+            border-radius: 8px;
+            background: #252525;
+        }
+        .level-title {
+            font-size: clamp(16px, 3vw, 18px);
+            font-weight: bold;
+            color: #f0f0f0;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            .level-section {
+                padding: 15px;
+            }
+        }
+        .visualization {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .set-display {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            min-width: 200px;
+            border: 1px solid #404040;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        .fuzzy-bit {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            margin: 2px;
+            text-align: center;
+            line-height: 25px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        .crisp-bit {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            margin: 2px;
+            text-align: center;
+            line-height: 25px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .bit-0 {
+            background: #404040;
+            color: #a0a0a0;
+        }
+        .bit-1 {
+            background: #3498db;
+            color: white;
+        }
+        .arrow {
+            font-size: 24px;
+            color: #808080;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            border: 1px solid #404040;
+        }
+        .controls h4 {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            color: #e0e0e0;
+            font-size: clamp(14px, 2.5vw, 16px);
+        }
+        .control-group {
+            margin: 10px 0;
+            color: #e0e0e0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        .control-group label {
+            flex: 1 1 150px;
+            min-width: 150px;
+            font-weight: 500;
+            font-size: clamp(12px, 2vw, 14px);
+        }
+        .control-group input[type="range"] {
+            flex: 1 1 150px;
+            min-width: 150px;
+        }
+        .control-group input[type="number"] {
+            width: 60px;
+            background: #404040;
+            border: 1px solid #606060;
+            color: #e0e0e0;
+            padding: 4px;
+            border-radius: 3px;
+        }
+        .control-group span {
+            min-width: 60px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: clamp(12px, 2vw, 14px);
+            margin: 5px;
+            white-space: nowrap;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        button:disabled {
+            background: #505050;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 768px) {
+            .visualization {
+                gap: 10px;
+            }
+            .arrow {
+                font-size: 20px;
+                width: 100%;
+                text-align: center;
+            }
+            .set-display {
+                min-width: 100%;
+                font-size: 12px;
+            }
+            .fuzzy-bit, .crisp-bit {
+                width: 20px;
+                height: 20px;
+                line-height: 20px;
+                font-size: 9px;
+                margin: 1px;
+            }
+            .control-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .control-group label {
+                width: 100%;
+            }
+            .control-group input[type="range"] {
+                width: 100%;
+            }
+            button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+        .environment-display {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            border: 1px solid #404040;
+            overflow-x: auto;
+        }
+        .environment-row {
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+        }
+        .concept-window {
+            position: relative;
+            display: inline-block;
+        }
+        .window-highlight {
+            position: absolute;
+            border: 2px solid #e67e22;
+            background: rgba(230, 126, 34, 0.1);
+            pointer-events: none;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            border: 1px solid #404040;
+        }
+        .stat-label {
+            font-size: clamp(11px, 2vw, 12px);
+            color: #a0a0a0;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: clamp(18px, 4vw, 24px);
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+        .outcome-success {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        .outcome-failure {
+            background: #c0392b;
+            color: white;
+            border-color: #c0392b;
+        }
+        .outcome-abandoned {
+            background: #7f8c8d;
+            color: white;
+            border-color: #7f8c8d;
+        }
+        .outcome-running {
+            background: #f39c12;
+            color: white;
+            border-color: #f39c12;
+        }
+        canvas {
+            border: 1px solid #404040;
+            border-radius: 4px;
+            margin: 20px 0;
+            background: #1a1a1a;
+            max-width: 100%;
+            height: auto;
+        }
+        .scheme-template {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .scheme-slot {
+            width: 30px;
+            height: 30px;
+            border: 2px dashed #606060;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #a0a0a0;
+            background: #2d2d2d;
+        }
+        .scheme-slot.filled {
+            border: 2px solid #16a085;
+            background: #16a085;
+            color: white;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 10px;
+            }
+            .environment-display {
+                padding: 10px;
+            }
+            .scheme-slot {
+                width: 25px;
+                height: 25px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Venturing Function Dynamics</h1>
+        <p class="subtitle">Interactive Simulation of Nested Functional Architecture</p>
+
+        <div class="about-toggle" id="about-toggle" onclick="toggleAbout()">
+            <span class="toggle-arrow">&#9654;</span> About
+        </div>
+        <div class="about-content" id="about-content">
+            <h3>What is this?</h3>
+            <p>An interactive simulation exploring how ventures emerge through a nested functional architecture with three levels of abstraction.</p>
+
+            <h3>The Three Levels</h3>
+            <ul>
+                <li><strong>Level 1 &ndash; Framing:</strong> Converts fuzzy (probabilistic) representations of a present situation and an imaginary situation into a crisp binary venture idea using a configurable threshold.</li>
+                <li><strong>Level 2 &ndash; Modelling:</strong> Applies an ordering scheme (template) to the raw idea, producing a rigid venture concept with positional constraints.</li>
+                <li><strong>Level 3 &ndash; Venturing:</strong> Places the concept into a dynamic binary environment where an agent senses, moves, and flips bits to maximise fit &mdash; yielding success, failure, or abandonment.</li>
+            </ul>
+
+            <h3>How to use</h3>
+            <ul>
+                <li>Adjust sliders to change thresholds, concept size, agent capabilities, and environment parameters.</li>
+                <li>Click <em>Generate New Idea</em> and <em>Apply Scheme to Idea</em> to prepare a venture concept.</li>
+                <li>Hit <em>Start Venture</em> to watch the agent attempt to fit the concept into the environment in real time.</li>
+                <li>Use <em>Single Step</em> to advance one timestep at a time.</li>
+            </ul>
+
+            <h3>Built with</h3>
+            <p>Pure HTML, CSS, and JavaScript &mdash; no external dependencies.</p>
+        </div>
+
+        <!-- LEVEL 1: FRAMING -->
+        <div class="level-section">
+            <div class="level-title">LEVEL 1: FRAMING → Venture Idea</div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Threshold (fuzzy → crisp):</label>
+                    <input type="range" id="threshold" min="0" max="100" value="50" step="5">
+                    <span id="threshold-val">0.5</span>
+                </div>
+                <button onclick="generateIdea()">Generate New Idea</button>
+            </div>
+
+            <div class="visualization">
+                <div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Present Situation (fuzzy)</div>
+                    <div id="present-display" class="set-display"></div>
+                </div>
+                <div class="arrow">+</div>
+                <div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Imaginary Situation (fuzzy)</div>
+                    <div id="imaginary-display" class="set-display"></div>
+                </div>
+                <div class="arrow">→</div>
+                <div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Venture Idea (crisp)</div>
+                    <div id="idea-display" class="set-display"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 2: MODELLING -->
+        <div class="level-section">
+            <div class="level-title">LEVEL 2: MODELLING → Venture Concept</div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Concept Size:</label>
+                    <input type="range" id="concept-size" min="5" max="15" value="10" step="1">
+                    <span id="concept-size-val">10</span>
+                </div>
+                <button onclick="applySchemeToConcept()">Apply Scheme to Idea</button>
+            </div>
+
+            <div class="visualization">
+                <div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Venture Idea</div>
+                    <div id="idea-for-scheme" class="set-display"></div>
+                </div>
+                <div class="arrow">+</div>
+                <div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Ordering Scheme (template)</div>
+                    <div id="scheme-display" class="scheme-template"></div>
+                </div>
+                <div class="arrow">→</div>
+                <div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">Venture Concept (ordered & rigid)</div>
+                    <div id="concept-display" class="set-display"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 3: VENTURING -->
+        <div class="level-section">
+            <div class="level-title">LEVEL 3: VENTURING → Venture Evolution</div>
+            
+            <div class="controls">
+                <h4>Agent Parameters</h4>
+                <div class="control-group">
+                    <label>Sensing Range:</label>
+                    <input type="range" id="sensing-range" min="5" max="30" value="15" step="1">
+                    <span id="sensing-range-val">15</span>
+                </div>
+                <div class="control-group">
+                    <label>Flip Power (bits/turn):</label>
+                    <input type="range" id="flip-power" min="1" max="5" value="2" step="1">
+                    <span id="flip-power-val">2</span>
+                </div>
+                <div class="control-group">
+                    <label>Flip Success Rate:</label>
+                    <input type="range" id="flip-rate" min="0" max="100" value="70" step="5">
+                    <span id="flip-rate-val">70%</span>
+                </div>
+                <div class="control-group">
+                    <label>Initial Energy:</label>
+                    <input type="range" id="energy" min="50" max="300" value="150" step="10">
+                    <span id="energy-val">150</span>
+                </div>
+                <div class="control-group">
+                    <label>Abandonment Threshold:</label>
+                    <input type="range" id="abandon-threshold" min="20" max="80" value="50" step="5">
+                    <span id="abandon-threshold-val">50%</span>
+                </div>
+                
+                <h4>Environment Parameters</h4>
+                <div class="control-group">
+                    <label>Environment Size:</label>
+                    <input type="range" id="env-size" min="50" max="200" value="100" step="10">
+                    <span id="env-size-val">100</span>
+                </div>
+                <div class="control-group">
+                    <label>Environment Flip Rate:</label>
+                    <input type="range" id="env-flip-rate" min="0" max="20" value="5" step="1">
+                    <span id="env-flip-rate-val">5%</span>
+                </div>
+                
+                <button onclick="startVenture()" id="start-btn">Start Venture</button>
+                <button onclick="pauseVenture()" id="pause-btn" disabled>Pause</button>
+                <button onclick="resetVenture()" id="reset-btn">Reset</button>
+                <button onclick="stepVenture()" id="step-btn">Single Step</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Timestep</div>
+                    <div class="stat-value" id="timestep">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Energy Remaining</div>
+                    <div class="stat-value" id="energy-remaining">150</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Best Fit Score</div>
+                    <div class="stat-value" id="fit-score">-</div>
+                </div>
+                <div class="stat-card" id="outcome-card">
+                    <div class="stat-label">Outcome</div>
+                    <div class="stat-value" id="outcome">Not Started</div>
+                </div>
+            </div>
+
+            <div class="environment-display">
+                <div style="font-weight: bold; margin-bottom: 10px;">Environment & Concept Window</div>
+                <div id="environment-viz"></div>
+                <div style="margin-top: 10px; font-size: 12px; color: #a0a0a0;">
+                    Orange box = current sensing window | Concept attempting to fit
+                </div>
+            </div>
+
+            <canvas id="fitness-chart" width="1200" height="300" style="width: 100%; height: auto;"></canvas>
+            <div style="font-size: 12px; color: #a0a0a0; margin-top: 5px;">
+                Fitness over time (green = good fit, red = poor fit)
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let state = {
+            present: [],
+            imaginary: [],
+            idea: [],
+            concept: [],
+            environment: [],
+            agent: {
+                sensingRange: 15,
+                flipPower: 2,
+                flipRate: 0.7,
+                energy: 150,
+                abandonThreshold: 0.5
+            },
+            venture: {
+                timestep: 0,
+                currentPosition: 0,
+                fitnessHistory: [],
+                outcome: 'running'
+            },
+            animationId: null
+        };
+
+        // Initialize
+        generateIdea();
+        applySchemeToConcept();
+        initializeEnvironment();
+        setupSliders();
+
+        function setupSliders() {
+            const sliders = [
+                { id: 'threshold', display: 'threshold-val', format: v => (v/100).toFixed(2) },
+                { id: 'concept-size', display: 'concept-size-val', format: v => v },
+                { id: 'sensing-range', display: 'sensing-range-val', format: v => v },
+                { id: 'flip-power', display: 'flip-power-val', format: v => v },
+                { id: 'flip-rate', display: 'flip-rate-val', format: v => v + '%' },
+                { id: 'energy', display: 'energy-val', format: v => v },
+                { id: 'abandon-threshold', display: 'abandon-threshold-val', format: v => v + '%' },
+                { id: 'env-size', display: 'env-size-val', format: v => v },
+                { id: 'env-flip-rate', display: 'env-flip-rate-val', format: v => v + '%' }
+            ];
+
+            sliders.forEach(slider => {
+                const element = document.getElementById(slider.id);
+                const display = document.getElementById(slider.display);
+                element.addEventListener('input', () => {
+                    display.textContent = slider.format(element.value);
+                });
+            });
+        }
+
+        function generateIdea() {
+            const length = 20;
+            const threshold = parseFloat(document.getElementById('threshold').value) / 100;
+
+            // Generate fuzzy sets
+            state.present = Array.from({length}, () => Math.random());
+            state.imaginary = Array.from({length}, () => Math.random());
+
+            // Combine and crispify (simple averaging + threshold)
+            state.idea = state.present.map((p, i) => {
+                const combined = (p + state.imaginary[i]) / 2;
+                return combined >= threshold ? 1 : 0;
+            });
+
+            displayFuzzySets();
+            document.getElementById('idea-for-scheme').innerHTML = displayCrispSet(state.idea);
+        }
+
+        function displayFuzzySets() {
+            document.getElementById('present-display').innerHTML = 
+                state.present.map(v => {
+                    const intensity = Math.floor(v * 255);
+                    return `<span class="fuzzy-bit" style="background: rgb(52, 152, 219, ${v}); color: ${v > 0.5 ? 'white' : 'black'}">${v.toFixed(2)}</span>`;
+                }).join('');
+
+            document.getElementById('imaginary-display').innerHTML = 
+                state.imaginary.map(v => {
+                    const intensity = Math.floor(v * 255);
+                    return `<span class="fuzzy-bit" style="background: rgb(231, 76, 60, ${v}); color: ${v > 0.5 ? 'white' : 'black'}">${v.toFixed(2)}</span>`;
+                }).join('');
+
+            document.getElementById('idea-display').innerHTML = displayCrispSet(state.idea);
+        }
+
+        function displayCrispSet(set) {
+            return set.map(bit => 
+                `<span class="crisp-bit bit-${bit}">${bit}</span>`
+            ).join('');
+        }
+
+        function applySchemeToConcept() {
+            const conceptSize = parseInt(document.getElementById('concept-size').value);
+            
+            // Create ordering scheme (template with constraints)
+            const scheme = Array(conceptSize).fill(null).map((_, i) => ({
+                position: i,
+                constraint: i === 0 ? 'must-be-1' : (i === conceptSize - 1 ? 'must-be-0' : 'free')
+            }));
+
+            // Display scheme
+            document.getElementById('scheme-display').innerHTML = scheme.map((slot, i) => 
+                `<div class="scheme-slot">${i+1}</div>`
+            ).join('');
+
+            // Apply scheme to idea: extract and order bits according to template
+            state.concept = [];
+            for (let i = 0; i < conceptSize; i++) {
+                const constraint = scheme[i].constraint;
+                if (constraint === 'must-be-1') {
+                    state.concept.push(1);
+                } else if (constraint === 'must-be-0') {
+                    state.concept.push(0);
+                } else {
+                    // Take from idea (with wrapping if idea is shorter)
+                    state.concept.push(state.idea[i % state.idea.length]);
+                }
+            }
+
+            document.getElementById('concept-display').innerHTML = displayCrispSet(state.concept);
+        }
+
+        function initializeEnvironment() {
+            const envSize = parseInt(document.getElementById('env-size').value);
+            state.environment = Array.from({length: envSize}, () => Math.random() > 0.5 ? 1 : 0);
+            displayEnvironment();
+        }
+
+        function displayEnvironment() {
+            const chunkSize = 50;
+            const chunks = [];
+            for (let i = 0; i < state.environment.length; i += chunkSize) {
+                chunks.push(state.environment.slice(i, i + chunkSize));
+            }
+
+            document.getElementById('environment-viz').innerHTML = chunks.map((chunk, rowIdx) => 
+                `<div class="environment-row">${chunk.map((bit, colIdx) => {
+                    const globalIdx = rowIdx * chunkSize + colIdx;
+                    const inWindow = globalIdx >= state.venture.currentPosition && 
+                                    globalIdx < state.venture.currentPosition + state.concept.length;
+                    const style = inWindow ? 'border: 2px solid #e67e22;' : '';
+                    return `<span class="crisp-bit bit-${bit}" style="${style}">${bit}</span>`;
+                }).join('')}</div>`
+            ).join('');
+        }
+
+        function calculateFitness(position) {
+            if (position + state.concept.length > state.environment.length) {
+                return 0; // Out of bounds
+            }
+
+            let matches = 0;
+            for (let i = 0; i < state.concept.length; i++) {
+                if (state.environment[position + i] === state.concept[i]) {
+                    matches++;
+                }
+            }
+            return matches / state.concept.length;
+        }
+
+        function findBestPosition() {
+            const sensingRange = parseInt(document.getElementById('sensing-range').value);
+            const startPos = Math.max(0, state.venture.currentPosition - sensingRange);
+            const endPos = Math.min(state.environment.length - state.concept.length, 
+                                   state.venture.currentPosition + sensingRange);
+
+            let bestPos = state.venture.currentPosition;
+            let bestFit = calculateFitness(bestPos);
+
+            for (let pos = startPos; pos <= endPos; pos++) {
+                const fit = calculateFitness(pos);
+                if (fit > bestFit) {
+                    bestFit = fit;
+                    bestPos = pos;
+                }
+            }
+
+            return { position: bestPos, fitness: bestFit };
+        }
+
+        function implementAction(position, fitness) {
+            // Try to flip environment bits to improve fit
+            const flipPower = parseInt(document.getElementById('flip-power').value);
+            const flipRate = parseFloat(document.getElementById('flip-rate').value) / 100;
+
+            let flipsAttempted = 0;
+            for (let i = 0; i < state.concept.length && flipsAttempted < flipPower; i++) {
+                const envIdx = position + i;
+                if (state.environment[envIdx] !== state.concept[i]) {
+                    if (Math.random() < flipRate) {
+                        state.environment[envIdx] = state.concept[i];
+                    }
+                    flipsAttempted++;
+                }
+            }
+        }
+
+        function updateEnvironment() {
+            // Random flips in environment
+            const flipRate = parseFloat(document.getElementById('env-flip-rate').value) / 100;
+            for (let i = 0; i < state.environment.length; i++) {
+                if (Math.random() < flipRate) {
+                    state.environment[i] = 1 - state.environment[i];
+                }
+            }
+        }
+
+        function stepVenture() {
+            if (state.venture.outcome !== 'running') return;
+
+            state.venture.timestep++;
+
+            // Update environment
+            updateEnvironment();
+
+            // REGULATION: Find best position
+            const { position, fitness } = findBestPosition();
+            state.venture.currentPosition = position;
+
+            // IMPLEMENTATION: Try to improve fit
+            implementAction(position, fitness);
+
+            // Recalculate fitness after implementation
+            const newFitness = calculateFitness(position);
+            state.venture.fitnessHistory.push(newFitness);
+
+            // Update energy
+            state.agent.energy -= 1;
+
+            // Check outcomes
+            const abandonThreshold = parseFloat(document.getElementById('abandon-threshold').value) / 100;
+            
+            if (state.agent.energy <= 0) {
+                state.venture.outcome = 'abandoned';
+            } else if (newFitness < abandonThreshold && state.venture.timestep > 10) {
+                state.venture.outcome = 'failure';
+            } else if (state.venture.timestep > 50 && 
+                      state.venture.fitnessHistory.slice(-10).every(f => f > 0.7)) {
+                state.venture.outcome = 'success';
+            }
+
+            // Update display
+            displayEnvironment();
+            updateStats();
+            drawFitnessChart();
+
+            if (state.venture.outcome !== 'running') {
+                pauseVenture();
+            }
+        }
+
+        function startVenture() {
+            if (state.venture.outcome !== 'running') {
+                resetVenture();
+            }
+
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('pause-btn').disabled = false;
+
+            state.animationId = setInterval(stepVenture, 100);
+        }
+
+        function pauseVenture() {
+            if (state.animationId) {
+                clearInterval(state.animationId);
+                state.animationId = null;
+            }
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('pause-btn').disabled = true;
+        }
+
+        function resetVenture() {
+            pauseVenture();
+            
+            state.agent.energy = parseInt(document.getElementById('energy').value);
+            state.venture = {
+                timestep: 0,
+                currentPosition: 0,
+                fitnessHistory: [],
+                outcome: 'running'
+            };
+
+            initializeEnvironment();
+            updateStats();
+            drawFitnessChart();
+
+            document.getElementById('start-btn').disabled = false;
+        }
+
+        function updateStats() {
+            document.getElementById('timestep').textContent = state.venture.timestep;
+            document.getElementById('energy-remaining').textContent = Math.max(0, state.agent.energy);
+            
+            const currentFit = state.venture.fitnessHistory.length > 0 ? 
+                state.venture.fitnessHistory[state.venture.fitnessHistory.length - 1] : 0;
+            document.getElementById('fit-score').textContent = 
+                (currentFit * 100).toFixed(1) + '%';
+
+            const outcomeCard = document.getElementById('outcome-card');
+            outcomeCard.className = 'stat-card outcome-' + state.venture.outcome;
+            
+            const outcomeText = {
+                'running': 'Running',
+                'success': 'SUCCESS ✓',
+                'failure': 'FAILURE ✗',
+                'abandoned': 'ABANDONED'
+            };
+            document.getElementById('outcome').textContent = outcomeText[state.venture.outcome];
+        }
+
+        function drawFitnessChart() {
+            const canvas = document.getElementById('fitness-chart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Clear with dark background
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, width, height);
+
+            if (state.venture.fitnessHistory.length === 0) return;
+
+            // Draw grid
+            ctx.strokeStyle = '#404040';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                const y = (height / 10) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            // Draw fitness line
+            const maxSteps = Math.max(100, state.venture.fitnessHistory.length);
+            const xScale = width / maxSteps;
+            const yScale = height;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+
+            state.venture.fitnessHistory.forEach((fitness, i) => {
+                const x = i * xScale;
+                const y = height - (fitness * yScale);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+
+            // Draw threshold line
+            const threshold = parseFloat(document.getElementById('abandon-threshold').value) / 100;
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            const thresholdY = height - (threshold * yScale);
+            ctx.beginPath();
+            ctx.moveTo(0, thresholdY);
+            ctx.lineTo(width, thresholdY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw labels with light color
+            ctx.fillStyle = '#a0a0a0';
+            ctx.font = '12px Arial';
+            ctx.fillText('0%', 5, height - 5);
+            ctx.fillText('100%', 5, 15);
+            ctx.fillText(`Threshold: ${(threshold*100).toFixed(0)}%`, width - 120, thresholdY - 5);
+        }
+
+        function toggleAbout() {
+            document.getElementById('about-toggle').classList.toggle('open');
+            document.getElementById('about-content').classList.toggle('open');
+        }
+
+        // Initial draw
+        drawFitnessChart();
+    </script>
+</body>
+</html>
