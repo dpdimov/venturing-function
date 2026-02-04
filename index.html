@@ -490,7 +490,17 @@
                     <input type="range" id="abandon-threshold" min="20" max="80" value="50" step="5">
                     <span id="abandon-threshold-val">50%</span>
                 </div>
-                
+                <div class="control-group">
+                    <label>Success Threshold:</label>
+                    <input type="range" id="success-threshold" min="60" max="100" value="85" step="5">
+                    <span id="success-threshold-val">85%</span>
+                </div>
+                <div class="control-group">
+                    <label>Energy Cost per Flip:</label>
+                    <input type="range" id="flip-energy-cost" min="0" max="5" value="2" step="1">
+                    <span id="flip-energy-cost-val">2</span>
+                </div>
+
                 <h4>Environment Parameters</h4>
                 <div class="control-group">
                     <label>Environment Size:</label>
@@ -582,6 +592,8 @@
                 { id: 'flip-rate', display: 'flip-rate-val', format: v => v + '%' },
                 { id: 'energy', display: 'energy-val', format: v => v },
                 { id: 'abandon-threshold', display: 'abandon-threshold-val', format: v => v + '%' },
+                { id: 'success-threshold', display: 'success-threshold-val', format: v => v + '%' },
+                { id: 'flip-energy-cost', display: 'flip-energy-cost-val', format: v => v },
                 { id: 'env-size', display: 'env-size-val', format: v => v },
                 { id: 'env-flip-rate', display: 'env-flip-rate-val', format: v => v + '%' }
             ];
@@ -728,11 +740,13 @@
             // Try to flip environment bits to improve fit
             const flipPower = parseInt(document.getElementById('flip-power').value);
             const flipRate = parseFloat(document.getElementById('flip-rate').value) / 100;
+            const flipEnergyCost = parseInt(document.getElementById('flip-energy-cost').value);
 
             let flipsAttempted = 0;
             for (let i = 0; i < state.concept.length && flipsAttempted < flipPower; i++) {
                 const envIdx = position + i;
                 if (state.environment[envIdx] !== state.concept[i]) {
+                    state.agent.energy -= flipEnergyCost;
                     if (Math.random() < flipRate) {
                         state.environment[envIdx] = state.concept[i];
                     }
@@ -775,13 +789,15 @@
 
             // Check outcomes
             const abandonThreshold = parseFloat(document.getElementById('abandon-threshold').value) / 100;
-            
+            const successThreshold = parseFloat(document.getElementById('success-threshold').value) / 100;
+
             if (state.agent.energy <= 0) {
                 state.venture.outcome = 'abandoned';
             } else if (newFitness < abandonThreshold && state.venture.timestep > 10) {
                 state.venture.outcome = 'failure';
-            } else if (state.venture.timestep > 50 && 
-                      state.venture.fitnessHistory.slice(-10).every(f => f > 0.7)) {
+            } else if (state.venture.timestep > 50 &&
+                      state.venture.fitnessHistory.slice(-20).length >= 20 &&
+                      state.venture.fitnessHistory.slice(-20).every(f => f >= successThreshold)) {
                 state.venture.outcome = 'success';
             }
 
@@ -897,7 +913,7 @@
             });
             ctx.stroke();
 
-            // Draw threshold line
+            // Draw abandonment threshold line (red)
             const threshold = parseFloat(document.getElementById('abandon-threshold').value) / 100;
             ctx.strokeStyle = '#e74c3c';
             ctx.lineWidth = 1;
@@ -907,6 +923,15 @@
             ctx.moveTo(0, thresholdY);
             ctx.lineTo(width, thresholdY);
             ctx.stroke();
+
+            // Draw success threshold line (green)
+            const successThreshold = parseFloat(document.getElementById('success-threshold').value) / 100;
+            ctx.strokeStyle = '#27ae60';
+            const successY = height - (successThreshold * yScale);
+            ctx.beginPath();
+            ctx.moveTo(0, successY);
+            ctx.lineTo(width, successY);
+            ctx.stroke();
             ctx.setLineDash([]);
 
             // Draw labels with light color
@@ -914,7 +939,10 @@
             ctx.font = '12px Arial';
             ctx.fillText('0%', 5, height - 5);
             ctx.fillText('100%', 5, 15);
-            ctx.fillText(`Threshold: ${(threshold*100).toFixed(0)}%`, width - 120, thresholdY - 5);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillText(`Fail: ${(threshold*100).toFixed(0)}%`, width - 120, thresholdY + 14);
+            ctx.fillStyle = '#27ae60';
+            ctx.fillText(`Success: ${(successThreshold*100).toFixed(0)}%`, width - 120, successY - 5);
         }
 
         function toggleAbout() {
