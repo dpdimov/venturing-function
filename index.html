@@ -312,6 +312,11 @@
             color: white;
             border-color: #7f8c8d;
         }
+        .outcome-burned-out {
+            background: #8e44ad;
+            color: white;
+            border-color: #8e44ad;
+        }
         .outcome-running {
             background: #f39c12;
             color: white;
@@ -388,6 +393,357 @@
                 font-size: 10px;
             }
         }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #404040;
+            padding-bottom: 0;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: #1a1a1a;
+            color: #a0a0a0;
+            border: 2px solid #404040;
+            border-bottom: none;
+            padding: 12px 24px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+        .tab-btn.active {
+            background: #2d2d2d;
+            color: #3498db;
+            border-color: #3498db;
+            border-bottom: 2px solid #2d2d2d;
+        }
+        .tab-content {
+            position: relative;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Tornado Chart */
+        .tornado-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            border: 1px solid #404040;
+        }
+        .tornado-row {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+        .tornado-label {
+            width: 140px;
+            text-align: right;
+            padding-right: 10px;
+            color: #a0a0a0;
+            flex-shrink: 0;
+        }
+        .tornado-bar-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            height: 24px;
+            position: relative;
+        }
+        .tornado-center-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #606060;
+        }
+        .tornado-bar {
+            height: 20px;
+            position: absolute;
+            top: 2px;
+            border-radius: 3px;
+        }
+        .tornado-bar.low {
+            background: #3498db;
+        }
+        .tornado-bar.high {
+            background: #e67e22;
+        }
+        .tornado-value {
+            width: 60px;
+            text-align: left;
+            padding-left: 10px;
+            color: #808080;
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+        .tornado-legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #a0a0a0;
+        }
+        .tornado-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tornado-legend-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        /* Experimentation Table */
+        .experiment-table-container {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .experiment-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .experiment-table th,
+        .experiment-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border: 1px solid #404040;
+        }
+        .experiment-table th {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .experiment-table th:hover {
+            background: #252525;
+        }
+        .experiment-table th .sort-indicator {
+            margin-left: 5px;
+            color: #606060;
+        }
+        .experiment-table th.sorted .sort-indicator {
+            color: #3498db;
+        }
+        .experiment-table td {
+            background: #252525;
+            color: #c0c0c0;
+        }
+        .experiment-table tr:hover td {
+            background: #2d2d2d;
+        }
+
+        /* Parameter Checkboxes */
+        .param-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .param-checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 4px;
+        }
+        .param-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #e0e0e0;
+            font-size: 13px;
+        }
+        .param-checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .param-range-inputs {
+            display: none;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .param-checkbox-group.selected .param-range-inputs {
+            display: flex;
+        }
+        .param-range-inputs label {
+            font-size: 11px;
+            color: #808080;
+        }
+        .param-range-inputs input[type="number"] {
+            width: 60px;
+            background: #2d2d2d;
+            border: 1px solid #505050;
+            color: #e0e0e0;
+            padding: 4px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .combination-warning {
+            padding: 10px 15px;
+            background: #f39c12;
+            color: #1a1a1a;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .tab-btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+            .tornado-label {
+                width: 100px;
+                font-size: 11px;
+            }
+            .param-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Heatmap */
+        .heatmap-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 4px;
+        }
+        .heatmap-controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .heatmap-controls label {
+            color: #a0a0a0;
+            font-size: 13px;
+        }
+        .heatmap-controls select {
+            background: #2d2d2d;
+            border: 1px solid #505050;
+            color: #e0e0e0;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .heatmap-controls select:hover {
+            border-color: #3498db;
+        }
+        .heatmap-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            overflow-x: auto;
+        }
+        .heatmap-y-label {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+            color: #a0a0a0;
+            font-size: 12px;
+            padding: 10px 5px;
+        }
+        .heatmap-main {
+            display: flex;
+            flex-direction: column;
+        }
+        .heatmap-grid {
+            display: flex;
+            flex-direction: column;
+        }
+        .heatmap-row {
+            display: flex;
+        }
+        .heatmap-cell {
+            width: 50px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid #2d2d2d;
+            cursor: default;
+            transition: transform 0.1s;
+        }
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+            z-index: 1;
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
+        }
+        .heatmap-x-labels {
+            display: flex;
+            margin-top: 5px;
+        }
+        .heatmap-x-label {
+            width: 50px;
+            text-align: center;
+            font-size: 11px;
+            color: #a0a0a0;
+        }
+        .heatmap-y-labels {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            margin-right: 5px;
+        }
+        .heatmap-y-value {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 11px;
+            color: #a0a0a0;
+            padding-right: 5px;
+        }
+        .heatmap-x-title {
+            text-align: center;
+            color: #a0a0a0;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #a0a0a0;
+        }
+        .heatmap-legend-bar {
+            width: 200px;
+            height: 16px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #c0392b, #f39c12, #27ae60);
+        }
     </style>
 </head>
 <body>
@@ -406,7 +762,7 @@
             <ul>
                 <li><strong>Level 1 &ndash; Framing:</strong> Converts fuzzy (probabilistic) representations of a present situation and an imaginary situation into a crisp binary venture idea using a configurable threshold.</li>
                 <li><strong>Level 2 &ndash; Modelling:</strong> Applies an ordering scheme (template) to the raw idea, producing a rigid venture concept with positional constraints.</li>
-                <li><strong>Level 3 &ndash; Venturing:</strong> Places the concept into a dynamic binary environment where an agent senses, moves, and flips bits to maximise fit &mdash; yielding success, failure, or abandonment.</li>
+                <li><strong>Level 3 &ndash; Venturing:</strong> Places the concept into a dynamic binary environment where an agent senses, moves, and flips bits to maximise fit &mdash; yielding success, abandonment (poor fit), or burnout (energy depleted).</li>
             </ul>
 
             <h3>How to use</h3>
@@ -420,6 +776,17 @@
             <h3>Built with</h3>
             <p>Pure HTML, CSS, and JavaScript &mdash; no external dependencies.</p>
         </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="simulation" onclick="switchTab('simulation')">Simulation</button>
+            <button class="tab-btn" data-tab="cohort" onclick="switchTab('cohort')">Cohort</button>
+            <button class="tab-btn" data-tab="sensitivity" onclick="switchTab('sensitivity')">Sensitivity</button>
+            <button class="tab-btn" data-tab="experimentation" onclick="switchTab('experimentation')">Experimentation</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- SIMULATION TAB -->
+            <div class="tab-pane active" id="tab-simulation">
 
         <!-- LEVEL 1: FRAMING -->
         <div class="level-section">
@@ -576,7 +943,10 @@
             </div>
         </div>
 
-        <!-- COHORT SIMULATION -->
+            </div><!-- End tab-simulation -->
+
+            <!-- COHORT TAB -->
+            <div class="tab-pane" id="tab-cohort">
         <div class="level-section">
             <div class="level-title">COHORT SIMULATION → Statistical Outcomes</div>
 
@@ -603,13 +973,13 @@
                     <div class="stat-label">Success Rate</div>
                     <div class="stat-value" id="cohort-success-rate">-</div>
                 </div>
-                <div class="stat-card outcome-failure">
-                    <div class="stat-label">Failure Rate</div>
-                    <div class="stat-value" id="cohort-failure-rate">-</div>
-                </div>
                 <div class="stat-card outcome-abandoned">
                     <div class="stat-label">Abandoned Rate</div>
                     <div class="stat-value" id="cohort-abandoned-rate">-</div>
+                </div>
+                <div class="stat-card outcome-burned-out">
+                    <div class="stat-label">Burned Out Rate</div>
+                    <div class="stat-value" id="cohort-burned-out-rate">-</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Avg Final Fitness</div>
@@ -626,6 +996,117 @@
                 Outcome distribution across cohort agents
             </div>
         </div>
+            </div><!-- End tab-cohort -->
+
+            <!-- SENSITIVITY TAB -->
+            <div class="tab-pane" id="tab-sensitivity">
+        <div class="level-section">
+            <div class="level-title">SENSITIVITY ANALYSIS → Parameter Impact</div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Sample Size (agents per test):</label>
+                    <input type="range" id="sensitivity-sample-size" min="20" max="200" value="50" step="10">
+                    <span id="sensitivity-sample-size-val">50</span>
+                </div>
+                <button onclick="runSensitivityAnalysis()" id="sensitivity-run-btn">Run Sensitivity Analysis</button>
+            </div>
+
+            <div class="cohort-progress-container" id="sensitivity-progress-container">
+                <div class="cohort-progress-bar" id="sensitivity-progress-bar">0%</div>
+            </div>
+
+            <div id="sensitivity-results" style="display: none;">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Baseline Success Rate</div>
+                        <div class="stat-value" id="sensitivity-baseline">-</div>
+                    </div>
+                </div>
+
+                <div class="tornado-container">
+                    <div style="font-weight: bold; margin-bottom: 15px; color: #e0e0e0;">Parameter Impact on Success Rate</div>
+                    <div id="tornado-chart"></div>
+                    <div class="tornado-legend">
+                        <div class="tornado-legend-item">
+                            <div class="tornado-legend-box" style="background: #3498db;"></div>
+                            <span>Low Value</span>
+                        </div>
+                        <div class="tornado-legend-item">
+                            <div class="tornado-legend-box" style="background: #e67e22;"></div>
+                            <span>High Value</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            </div><!-- End tab-sensitivity -->
+
+            <!-- EXPERIMENTATION TAB -->
+            <div class="tab-pane" id="tab-experimentation">
+        <div class="level-section">
+            <div class="level-title">EXPERIMENTATION → Parameter Combinations</div>
+
+            <div class="controls">
+                <h4>Select Parameters to Vary</h4>
+                <div class="param-selection" id="experiment-param-selection"></div>
+
+                <div class="control-group">
+                    <label>Sample Size (agents per combination):</label>
+                    <input type="range" id="experiment-sample-size" min="10" max="100" value="30" step="5">
+                    <span id="experiment-sample-size-val">30</span>
+                </div>
+
+                <div id="combination-warning" class="combination-warning" style="display: none;"></div>
+
+                <button onclick="runExperiments()" id="experiment-run-btn">Run Experiments</button>
+            </div>
+
+            <div class="cohort-progress-container" id="experiment-progress-container">
+                <div class="cohort-progress-bar" id="experiment-progress-bar">0%</div>
+            </div>
+
+            <div id="experiment-results" style="display: none;">
+                <div class="heatmap-container" id="heatmap-container" style="display: none;">
+                    <div style="font-weight: bold; margin-bottom: 15px; color: #e0e0e0;">Success Rate Heatmap</div>
+                    <div class="heatmap-controls">
+                        <div>
+                            <label>X-Axis: </label>
+                            <select id="heatmap-x-axis" onchange="updateHeatmap()"></select>
+                        </div>
+                        <div>
+                            <label>Y-Axis: </label>
+                            <select id="heatmap-y-axis" onchange="updateHeatmap()"></select>
+                        </div>
+                    </div>
+                    <div class="heatmap-wrapper">
+                        <div class="heatmap-y-label" id="heatmap-y-title"></div>
+                        <div class="heatmap-y-labels" id="heatmap-y-labels"></div>
+                        <div class="heatmap-main">
+                            <div class="heatmap-grid" id="heatmap-grid"></div>
+                            <div class="heatmap-x-labels" id="heatmap-x-labels"></div>
+                            <div class="heatmap-x-title" id="heatmap-x-title"></div>
+                        </div>
+                    </div>
+                    <div class="heatmap-legend">
+                        <span>0%</span>
+                        <div class="heatmap-legend-bar"></div>
+                        <span>100%</span>
+                        <span style="margin-left: 10px; color: #606060;">(Success Rate)</span>
+                    </div>
+                </div>
+
+                <div class="experiment-table-container">
+                    <table class="experiment-table" id="experiment-table">
+                        <thead id="experiment-table-head"></thead>
+                        <tbody id="experiment-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+            </div><!-- End tab-experimentation -->
+
+        </div><!-- End tab-content -->
     </div>
 
     <script>
@@ -869,9 +1350,9 @@
             const successThreshold = parseFloat(document.getElementById('success-threshold').value) / 100;
 
             if (state.agent.energy <= 0) {
-                state.venture.outcome = 'abandoned';
+                state.venture.outcome = 'burned-out';
             } else if (newFitness < abandonThreshold && state.venture.timestep > 10) {
-                state.venture.outcome = 'failure';
+                state.venture.outcome = 'abandoned';
             } else if (state.venture.timestep > 50 &&
                       state.venture.fitnessHistory.slice(-20).length >= 20 &&
                       state.venture.fitnessHistory.slice(-20).every(f => f >= successThreshold)) {
@@ -941,8 +1422,8 @@
             const outcomeText = {
                 'running': 'Running',
                 'success': 'SUCCESS ✓',
-                'failure': 'FAILURE ✗',
-                'abandoned': 'ABANDONED'
+                'abandoned': 'ABANDONED',
+                'burned-out': 'BURNED OUT'
             };
             document.getElementById('outcome').textContent = outcomeText[state.venture.outcome];
         }
@@ -1135,9 +1616,9 @@
 
                 // Check outcomes
                 if (energy <= 0) {
-                    outcome = 'abandoned';
+                    outcome = 'burned-out';
                 } else if (newFitness < abandonThreshold && timestep > 10) {
-                    outcome = 'failure';
+                    outcome = 'abandoned';
                 } else if (
                     timestep > 50 &&
                     fitnessHistory.length >= 20 &&
@@ -1147,8 +1628,8 @@
                 }
             }
 
-            // If still running after MAX_STEPS, count as abandoned
-            if (outcome === 'running') outcome = 'abandoned';
+            // If still running after MAX_STEPS, count as burned out
+            if (outcome === 'running') outcome = 'burned-out';
 
             const finalFitness = fitnessHistory.length > 0 ? fitnessHistory[fitnessHistory.length - 1] : 0;
             return { outcome, steps: timestep, finalFitness };
@@ -1206,7 +1687,7 @@
 
         function displayCohortResults(results) {
             const total = results.length;
-            const counts = { success: 0, failure: 0, abandoned: 0 };
+            const counts = { success: 0, abandoned: 0, 'burned-out': 0 };
             let totalFitness = 0;
             let totalSteps = 0;
 
@@ -1218,10 +1699,10 @@
 
             document.getElementById('cohort-success-rate').textContent =
                 (counts.success / total * 100).toFixed(1) + '%';
-            document.getElementById('cohort-failure-rate').textContent =
-                (counts.failure / total * 100).toFixed(1) + '%';
             document.getElementById('cohort-abandoned-rate').textContent =
                 (counts.abandoned / total * 100).toFixed(1) + '%';
+            document.getElementById('cohort-burned-out-rate').textContent =
+                (counts['burned-out'] / total * 100).toFixed(1) + '%';
             document.getElementById('cohort-avg-fitness').textContent =
                 (totalFitness / total * 100).toFixed(1) + '%';
             document.getElementById('cohort-avg-steps').textContent =
@@ -1244,9 +1725,9 @@
             ctx.fillRect(0, 0, W, H);
 
             const categories = [
-                { key: 'success',   label: 'Success',   color: '#27ae60' },
-                { key: 'failure',   label: 'Failure',   color: '#c0392b' },
-                { key: 'abandoned', label: 'Abandoned', color: '#7f8c8d' }
+                { key: 'success',    label: 'Success',    color: '#27ae60' },
+                { key: 'abandoned',  label: 'Abandoned',  color: '#7f8c8d' },
+                { key: 'burned-out', label: 'Burned Out', color: '#8e44ad' }
             ];
 
             const padding = { left: 60, right: 40, top: 30, bottom: 50 };
@@ -1298,6 +1779,630 @@
                 ctx.fillText('(' + counts[cat.key] + '/' + total + ')', x + barWidth / 2, padding.top + chartH + 38);
             });
         }
+
+        // --- Tab Navigation ---
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn =>
+                btn.classList.toggle('active', btn.dataset.tab === tabId));
+            document.querySelectorAll('.tab-pane').forEach(pane =>
+                pane.classList.toggle('active', pane.id === 'tab-' + tabId));
+        }
+
+        // --- Sensitivity Analysis ---
+
+        const sensitivityParams = [
+            { id: 'sensing-range',     label: 'Sensing Range',      min: 5,  max: 30,  round: true },
+            { id: 'flip-power',        label: 'Flip Power',         min: 1,  max: 5,   round: true },
+            { id: 'flip-rate',         label: 'Flip Success Rate',  min: 0,  max: 100, round: false },
+            { id: 'energy',            label: 'Initial Energy',     min: 50, max: 300, round: true },
+            { id: 'abandon-threshold', label: 'Abandon Threshold',  min: 20, max: 80,  round: false },
+            { id: 'success-threshold', label: 'Success Threshold',  min: 60, max: 100, round: false },
+            { id: 'flip-energy-cost',  label: 'Flip Energy Cost',   min: 0,  max: 5,   round: true },
+            { id: 'env-size',          label: 'Environment Size',   min: 50, max: 200, round: true },
+            { id: 'env-flip-rate',     label: 'Env Flip Rate',      min: 0,  max: 20,  round: false }
+        ];
+
+        function getBaselineParams() {
+            const params = {};
+            sensitivityParams.forEach(p => {
+                params[p.id] = parseFloat(document.getElementById(p.id).value);
+            });
+            return params;
+        }
+
+        function runCohortWithParams(params, sampleSize, concept) {
+            let successes = 0;
+            let totalFitness = 0;
+            let totalSteps = 0;
+
+            for (let i = 0; i < sampleSize; i++) {
+                const result = simulateOneAgent(params, concept);
+                if (result.outcome === 'success') successes++;
+                totalFitness += result.finalFitness;
+                totalSteps += result.steps;
+            }
+
+            return {
+                successRate: successes / sampleSize,
+                avgFitness: totalFitness / sampleSize,
+                avgSteps: totalSteps / sampleSize
+            };
+        }
+
+        function runSensitivityAnalysis() {
+            const sampleSize = parseInt(document.getElementById('sensitivity-sample-size').value);
+            const conceptSnapshot = state.concept.slice();
+
+            if (conceptSnapshot.length === 0) {
+                alert('Generate an idea and apply a scheme first (Levels 1 & 2 in Simulation tab).');
+                return;
+            }
+
+            const btn = document.getElementById('sensitivity-run-btn');
+            btn.disabled = true;
+
+            const progressContainer = document.getElementById('sensitivity-progress-container');
+            const progressBar = document.getElementById('sensitivity-progress-bar');
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+
+            document.getElementById('sensitivity-results').style.display = 'none';
+
+            const baselineParams = getBaselineParams();
+            const totalTests = 1 + sensitivityParams.length * 2; // baseline + low/high for each param
+            let testsCompleted = 0;
+
+            const results = [];
+            let baselineResult = null;
+
+            function updateProgress() {
+                const pct = Math.round((testsCompleted / totalTests) * 100);
+                progressBar.style.width = pct + '%';
+                progressBar.textContent = pct + '%';
+            }
+
+            function runNextTest() {
+                if (testsCompleted === 0) {
+                    // Run baseline
+                    baselineResult = runCohortWithParams(baselineParams, sampleSize, conceptSnapshot);
+                    testsCompleted++;
+                    updateProgress();
+                    setTimeout(runNextTest, 0);
+                } else if (testsCompleted <= sensitivityParams.length * 2) {
+                    const paramIdx = Math.floor((testsCompleted - 1) / 2);
+                    const isLow = (testsCompleted - 1) % 2 === 0;
+                    const param = sensitivityParams[paramIdx];
+
+                    const testParams = { ...baselineParams };
+                    testParams[param.id] = isLow ? param.min : param.max;
+
+                    const result = runCohortWithParams(testParams, sampleSize, conceptSnapshot);
+
+                    if (isLow) {
+                        results.push({
+                            param: param,
+                            lowValue: param.min,
+                            highValue: param.max,
+                            lowResult: result,
+                            highResult: null
+                        });
+                    } else {
+                        results[results.length - 1].highResult = result;
+                    }
+
+                    testsCompleted++;
+                    updateProgress();
+                    setTimeout(runNextTest, 0);
+                } else {
+                    // Done
+                    btn.disabled = false;
+                    displaySensitivityResults(baselineResult, results);
+                }
+            }
+
+            setTimeout(runNextTest, 0);
+        }
+
+        function displaySensitivityResults(baseline, results) {
+            document.getElementById('sensitivity-results').style.display = 'block';
+            document.getElementById('sensitivity-baseline').textContent =
+                (baseline.successRate * 100).toFixed(1) + '%';
+
+            // Calculate impact and sort by absolute range
+            results.forEach(r => {
+                r.lowDelta = r.lowResult.successRate - baseline.successRate;
+                r.highDelta = r.highResult.successRate - baseline.successRate;
+                r.range = Math.abs(r.highDelta - r.lowDelta);
+            });
+
+            results.sort((a, b) => b.range - a.range);
+
+            drawTornadoChart(results, baseline.successRate);
+        }
+
+        function drawTornadoChart(results, baselineRate) {
+            const container = document.getElementById('tornado-chart');
+
+            // Find max absolute delta for scaling
+            let maxDelta = 0;
+            results.forEach(r => {
+                maxDelta = Math.max(maxDelta, Math.abs(r.lowDelta), Math.abs(r.highDelta));
+            });
+            if (maxDelta < 0.01) maxDelta = 0.01; // Prevent division by zero
+
+            let html = '';
+            results.forEach(r => {
+                const lowWidth = Math.abs(r.lowDelta) / maxDelta * 45; // 45% max width each side
+                const highWidth = Math.abs(r.highDelta) / maxDelta * 45;
+
+                // Low bar: extends left if negative delta, right if positive
+                let lowStyle, highStyle;
+                if (r.lowDelta < 0) {
+                    lowStyle = `right: 50%; width: ${lowWidth}%;`;
+                } else {
+                    lowStyle = `left: 50%; width: ${lowWidth}%;`;
+                }
+                if (r.highDelta < 0) {
+                    highStyle = `right: 50%; width: ${highWidth}%;`;
+                } else {
+                    highStyle = `left: 50%; width: ${highWidth}%;`;
+                }
+
+                html += `
+                    <div class="tornado-row">
+                        <div class="tornado-label">${r.param.label}</div>
+                        <div class="tornado-bar-container">
+                            <div class="tornado-center-line"></div>
+                            <div class="tornado-bar low" style="${lowStyle}"
+                                 title="Low (${r.lowValue}): ${(r.lowDelta * 100).toFixed(1)}%"></div>
+                            <div class="tornado-bar high" style="${highStyle}"
+                                 title="High (${r.highValue}): ${(r.highDelta * 100).toFixed(1)}%"></div>
+                        </div>
+                        <div class="tornado-value">${(r.range * 100).toFixed(1)}%</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // --- Experimentation ---
+
+        const experimentParams = sensitivityParams.map(p => ({
+            ...p,
+            selected: false,
+            minVal: p.min,
+            maxVal: p.max,
+            steps: 3
+        }));
+
+        let experimentResults = [];
+        let experimentSortColumn = null;
+        let experimentSortAsc = true;
+
+        function initExperimentParamSelection() {
+            const container = document.getElementById('experiment-param-selection');
+            let html = '';
+
+            experimentParams.forEach((p, idx) => {
+                html += `
+                    <div class="param-checkbox-group" id="param-group-${idx}">
+                        <label class="param-checkbox-label">
+                            <input type="checkbox" onchange="toggleExperimentParam(${idx}, this.checked)">
+                            ${p.label}
+                        </label>
+                        <div class="param-range-inputs">
+                            <div>
+                                <label>Min:</label>
+                                <input type="number" id="exp-min-${idx}" value="${p.min}" min="${p.min}" max="${p.max}" oninput="updateExperimentParam(${idx})">
+                            </div>
+                            <div>
+                                <label>Max:</label>
+                                <input type="number" id="exp-max-${idx}" value="${p.max}" min="${p.min}" max="${p.max}" oninput="updateExperimentParam(${idx})">
+                            </div>
+                            <div>
+                                <label>Steps:</label>
+                                <input type="number" id="exp-steps-${idx}" value="3" min="2" max="10" oninput="updateExperimentParam(${idx})">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function toggleExperimentParam(idx, selected) {
+            experimentParams[idx].selected = selected;
+            const group = document.getElementById('param-group-' + idx);
+            group.classList.toggle('selected', selected);
+            updateCombinationCount();
+        }
+
+        function updateExperimentParam(idx) {
+            // Just trigger a combination count update which syncs all params
+            updateCombinationCount();
+        }
+
+        function syncAllExperimentParams() {
+            // Read current values from all input fields to ensure experimentParams is up-to-date
+            experimentParams.forEach((p, idx) => {
+                const minEl = document.getElementById('exp-min-' + idx);
+                const maxEl = document.getElementById('exp-max-' + idx);
+                const stepsEl = document.getElementById('exp-steps-' + idx);
+
+                if (minEl && maxEl && stepsEl) {
+                    const minInput = parseFloat(minEl.value);
+                    const maxInput = parseFloat(maxEl.value);
+                    const stepsInput = parseInt(stepsEl.value);
+
+                    p.minVal = isNaN(minInput) ? p.min : minInput;
+                    p.maxVal = isNaN(maxInput) ? p.max : maxInput;
+                    p.steps = isNaN(stepsInput) || stepsInput < 2 ? 3 : stepsInput;
+
+                    // Clamp to valid range
+                    p.minVal = Math.max(p.min, Math.min(p.max, p.minVal));
+                    p.maxVal = Math.max(p.min, Math.min(p.max, p.maxVal));
+
+                    // Ensure min <= max
+                    if (p.minVal > p.maxVal) {
+                        const temp = p.minVal;
+                        p.minVal = p.maxVal;
+                        p.maxVal = temp;
+                    }
+                }
+            });
+        }
+
+        function updateCombinationCount() {
+            syncAllExperimentParams();
+            const selected = experimentParams.filter(p => p.selected);
+            if (selected.length === 0) {
+                document.getElementById('combination-warning').style.display = 'none';
+                return;
+            }
+
+            let combinations = 1;
+            selected.forEach(p => combinations *= p.steps);
+
+            const warning = document.getElementById('combination-warning');
+            if (combinations > 100) {
+                warning.style.display = 'block';
+                warning.style.background = '#f39c12';
+                warning.textContent = `Warning: ${combinations} combinations selected. This may take a while. Consider reducing steps or parameters (max recommended: 100).`;
+            } else {
+                warning.style.display = 'block';
+                warning.style.background = '#27ae60';
+                warning.textContent = `${combinations} combinations will be tested.`;
+            }
+        }
+
+        function generateCombinations(selectedParams, baselineParams) {
+            const combinations = [];
+
+            function recurse(idx, currentCombo) {
+                if (idx >= selectedParams.length) {
+                    combinations.push({ ...currentCombo });
+                    return;
+                }
+
+                const p = selectedParams[idx];
+                const stepSize = (p.maxVal - p.minVal) / (p.steps - 1);
+
+                for (let i = 0; i < p.steps; i++) {
+                    let val = p.minVal + stepSize * i;
+                    if (p.round) val = Math.round(val);
+                    currentCombo[p.id] = val;
+                    recurse(idx + 1, currentCombo);
+                }
+            }
+
+            recurse(0, { ...baselineParams });
+            return combinations;
+        }
+
+        function runExperiments() {
+            const sampleSize = parseInt(document.getElementById('experiment-sample-size').value);
+            const conceptSnapshot = state.concept.slice();
+
+            if (conceptSnapshot.length === 0) {
+                alert('Generate an idea and apply a scheme first (Levels 1 & 2 in Simulation tab).');
+                return;
+            }
+
+            // Sync all parameter values from inputs before running
+            syncAllExperimentParams();
+
+            const selectedParams = experimentParams.filter(p => p.selected);
+            if (selectedParams.length === 0) {
+                alert('Select at least one parameter to vary.');
+                return;
+            }
+
+            const baselineParams = getBaselineParams();
+            const combinations = generateCombinations(selectedParams, baselineParams);
+
+            if (combinations.length > 500) {
+                if (!confirm(`This will run ${combinations.length} simulations. Continue?`)) {
+                    return;
+                }
+            }
+
+            const btn = document.getElementById('experiment-run-btn');
+            btn.disabled = true;
+
+            const progressContainer = document.getElementById('experiment-progress-container');
+            const progressBar = document.getElementById('experiment-progress-bar');
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+
+            document.getElementById('experiment-results').style.display = 'none';
+
+            experimentResults = [];
+            let completed = 0;
+
+            function processNext() {
+                if (completed >= combinations.length) {
+                    btn.disabled = false;
+                    displayExperimentResults(selectedParams);
+                    return;
+                }
+
+                const params = combinations[completed];
+                const result = runCohortWithParams(params, sampleSize, conceptSnapshot);
+
+                experimentResults.push({
+                    params: params,
+                    successRate: result.successRate,
+                    failureRate: 0, // Would need to track this in runCohortWithParams
+                    abandonedRate: 0,
+                    avgFitness: result.avgFitness,
+                    avgSteps: result.avgSteps
+                });
+
+                completed++;
+                const pct = Math.round((completed / combinations.length) * 100);
+                progressBar.style.width = pct + '%';
+                progressBar.textContent = pct + '%';
+
+                setTimeout(processNext, 0);
+            }
+
+            setTimeout(processNext, 0);
+        }
+
+        // Store selected params for heatmap
+        let heatmapSelectedParams = [];
+
+        function displayExperimentResults(selectedParams) {
+            document.getElementById('experiment-results').style.display = 'block';
+            heatmapSelectedParams = selectedParams;
+
+            const thead = document.getElementById('experiment-table-head');
+            const tbody = document.getElementById('experiment-table-body');
+
+            // Build header
+            let headerHtml = '<tr>';
+            selectedParams.forEach(p => {
+                headerHtml += `<th onclick="sortExperimentTable('${p.id}')">${p.label}<span class="sort-indicator">▼</span></th>`;
+            });
+            headerHtml += '<th onclick="sortExperimentTable(\'successRate\')">Success Rate<span class="sort-indicator">▼</span></th>';
+            headerHtml += '<th onclick="sortExperimentTable(\'avgFitness\')">Avg Fitness<span class="sort-indicator">▼</span></th>';
+            headerHtml += '<th onclick="sortExperimentTable(\'avgSteps\')">Avg Steps<span class="sort-indicator">▼</span></th>';
+            headerHtml += '</tr>';
+            thead.innerHTML = headerHtml;
+
+            renderExperimentTableBody(selectedParams);
+
+            // Setup heatmap if 2+ parameters
+            setupHeatmap(selectedParams);
+        }
+
+        function setupHeatmap(selectedParams) {
+            const container = document.getElementById('heatmap-container');
+
+            if (selectedParams.length < 2) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+
+            // Populate axis dropdowns
+            const xSelect = document.getElementById('heatmap-x-axis');
+            const ySelect = document.getElementById('heatmap-y-axis');
+
+            let optionsHtml = '';
+            selectedParams.forEach(p => {
+                optionsHtml += `<option value="${p.id}">${p.label}</option>`;
+            });
+
+            xSelect.innerHTML = optionsHtml;
+            ySelect.innerHTML = optionsHtml;
+
+            // Default: first param on X, second on Y
+            xSelect.value = selectedParams[0].id;
+            ySelect.value = selectedParams[1].id;
+
+            updateHeatmap();
+        }
+
+        function updateHeatmap() {
+            const xParamId = document.getElementById('heatmap-x-axis').value;
+            const yParamId = document.getElementById('heatmap-y-axis').value;
+
+            if (xParamId === yParamId) {
+                // Same axis selected, swap Y to a different one
+                const other = heatmapSelectedParams.find(p => p.id !== xParamId);
+                if (other) {
+                    document.getElementById('heatmap-y-axis').value = other.id;
+                    return updateHeatmap();
+                }
+            }
+
+            const xParam = heatmapSelectedParams.find(p => p.id === xParamId);
+            const yParam = heatmapSelectedParams.find(p => p.id === yParamId);
+
+            if (!xParam || !yParam) return;
+
+            // Get unique values for each axis from the results
+            const xValues = [...new Set(experimentResults.map(r => r.params[xParamId]))].sort((a, b) => a - b);
+            const yValues = [...new Set(experimentResults.map(r => r.params[yParamId]))].sort((a, b) => b - a); // Reversed for display
+
+            // Build a map of (x, y) -> average success rate
+            const successMap = {};
+            const countMap = {};
+
+            experimentResults.forEach(r => {
+                const x = r.params[xParamId];
+                const y = r.params[yParamId];
+                const key = `${x}_${y}`;
+
+                if (!successMap[key]) {
+                    successMap[key] = 0;
+                    countMap[key] = 0;
+                }
+                successMap[key] += r.successRate;
+                countMap[key]++;
+            });
+
+            // Average the success rates
+            Object.keys(successMap).forEach(key => {
+                successMap[key] /= countMap[key];
+            });
+
+            // Render the heatmap grid
+            const gridEl = document.getElementById('heatmap-grid');
+            const xLabelsEl = document.getElementById('heatmap-x-labels');
+            const yLabelsEl = document.getElementById('heatmap-y-labels');
+
+            let gridHtml = '';
+            yValues.forEach(y => {
+                gridHtml += '<div class="heatmap-row">';
+                xValues.forEach(x => {
+                    const key = `${x}_${y}`;
+                    const rate = successMap[key];
+                    const color = getHeatmapColor(rate);
+                    const textColor = rate > 0.5 ? '#000' : '#fff';
+                    const displayRate = rate !== undefined ? (rate * 100).toFixed(0) + '%' : '-';
+                    gridHtml += `<div class="heatmap-cell" style="background: ${color}; color: ${textColor};" title="${xParam.label}=${x}, ${yParam.label}=${y}: ${displayRate}">${displayRate}</div>`;
+                });
+                gridHtml += '</div>';
+            });
+            gridEl.innerHTML = gridHtml;
+
+            // X-axis labels
+            let xLabelsHtml = '';
+            xValues.forEach(x => {
+                xLabelsHtml += `<div class="heatmap-x-label">${x}</div>`;
+            });
+            xLabelsEl.innerHTML = xLabelsHtml;
+
+            // Y-axis labels
+            let yLabelsHtml = '';
+            yValues.forEach(y => {
+                yLabelsHtml += `<div class="heatmap-y-value">${y}</div>`;
+            });
+            yLabelsEl.innerHTML = yLabelsHtml;
+
+            // Axis titles
+            document.getElementById('heatmap-x-title').textContent = xParam.label;
+            document.getElementById('heatmap-y-title').textContent = yParam.label;
+        }
+
+        function getHeatmapColor(rate) {
+            if (rate === undefined) return '#404040';
+
+            // Interpolate from red (0%) -> yellow (50%) -> green (100%)
+            let r, g, b;
+            if (rate < 0.5) {
+                // Red to Yellow
+                const t = rate * 2;
+                r = 192;
+                g = Math.round(57 + t * (156 - 57));
+                b = Math.round(43 + t * (18 - 43));
+            } else {
+                // Yellow to Green
+                const t = (rate - 0.5) * 2;
+                r = Math.round(243 - t * (243 - 39));
+                g = Math.round(156 + t * (174 - 156));
+                b = Math.round(18 + t * (96 - 18));
+            }
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function renderExperimentTableBody(selectedParams) {
+            if (!selectedParams) {
+                selectedParams = experimentParams.filter(p => p.selected);
+            }
+
+            const tbody = document.getElementById('experiment-table-body');
+            let bodyHtml = '';
+
+            experimentResults.forEach(r => {
+                bodyHtml += '<tr>';
+                selectedParams.forEach(p => {
+                    bodyHtml += `<td>${r.params[p.id]}</td>`;
+                });
+                bodyHtml += `<td>${(r.successRate * 100).toFixed(1)}%</td>`;
+                bodyHtml += `<td>${(r.avgFitness * 100).toFixed(1)}%</td>`;
+                bodyHtml += `<td>${r.avgSteps.toFixed(1)}</td>`;
+                bodyHtml += '</tr>';
+            });
+
+            tbody.innerHTML = bodyHtml;
+        }
+
+        function sortExperimentTable(column) {
+            if (experimentSortColumn === column) {
+                experimentSortAsc = !experimentSortAsc;
+            } else {
+                experimentSortColumn = column;
+                experimentSortAsc = true;
+            }
+
+            experimentResults.sort((a, b) => {
+                let valA, valB;
+                if (column === 'successRate' || column === 'avgFitness' || column === 'avgSteps') {
+                    valA = a[column];
+                    valB = b[column];
+                } else {
+                    valA = a.params[column];
+                    valB = b.params[column];
+                }
+
+                if (valA < valB) return experimentSortAsc ? -1 : 1;
+                if (valA > valB) return experimentSortAsc ? 1 : -1;
+                return 0;
+            });
+
+            renderExperimentTableBody();
+        }
+
+        // Setup additional slider listeners
+        function setupAdditionalSliders() {
+            const additionalSliders = [
+                { id: 'sensitivity-sample-size', display: 'sensitivity-sample-size-val', format: v => v },
+                { id: 'experiment-sample-size', display: 'experiment-sample-size-val', format: v => v }
+            ];
+
+            additionalSliders.forEach(slider => {
+                const element = document.getElementById(slider.id);
+                const display = document.getElementById(slider.display);
+                if (element && display) {
+                    element.addEventListener('input', () => {
+                        display.textContent = slider.format(element.value);
+                    });
+                }
+            });
+        }
+
+        // Initialize experiment parameter selection
+        initExperimentParamSelection();
+        setupAdditionalSliders();
     </script>
 </body>
 </html>
